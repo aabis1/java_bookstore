@@ -31,7 +31,7 @@
 
 					<div class="signin-form">
 						<h2 class="form-title">로그인 페이지</h2>
-						<form method="post" class="register-form"
+						<form class="register-form"
 							id="login-form">
 							<div class="form-group">
 								<label for="username"><i
@@ -46,7 +46,7 @@
 							</div>
 					
 							<div class="form-group form-button">
-								<input type="submit" name="signin" id="signin"
+								<input type="button" name="signin" id="signin"
 									class="form-submit" onclick="Login();" value="Login" />
 							</div>
 						</form>
@@ -89,9 +89,7 @@
 	SendLoginRequest("userId=" + userId + "&password=" + hashedPassword);
 	
     
-    alert("로그인 완료되었습니다. 홈페이지로 이동합니다.");
-    window.location.href = 'index.jsp';
-    
+
 	}
 	
 	// login.jsp 로 POST 요청 보내기
@@ -104,8 +102,22 @@
 		// Send the proper header information along with the request
 		xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
+		xhr.addEventListener("load", reqListener);
+
 	
 		xhr.send(string);
+	}
+	
+	function reqListener(e) {
+		if (e.srcElement.readyState == 4 && e.srcElement.status == 200)
+        {
+			alert("로그인 완료되었습니다. 홈페이지로 이동합니다.");
+		    window.location.href = 'index.jsp';
+        }
+		else 
+		{
+			alert("아이디 혹은 비밀번호를 다시 확인하세요.");
+		}
 	}
 	
 	function hash(string) {

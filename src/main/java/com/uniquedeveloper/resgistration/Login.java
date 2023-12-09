@@ -70,7 +70,13 @@ public class Login extends HttpServlet {
 			pst.setString(1, userId);
 			pst.setString(2, Password);
 			
-			var rowCount = pst.executeQuery();
+			var rs = pst.executeQuery();
+			
+			if(rs.next()) {
+				response.setStatus(200);
+			} else {
+				response.setStatus(400);
+			}
 			
 
 		} catch (Exception e) {
