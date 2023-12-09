@@ -27,7 +27,7 @@
 					<div class="signup-form">
 						<h2 class="form-title">회원가입</h2>
 					
-						<form method="post" action="register" class="register-form"
+						<form method="post" class="register-form"
 							id="register-form">
 							<div class="form-group">
 								<label for="name"><i
@@ -36,7 +36,7 @@
 							</div>
 							<div class="form-group">
 								<label for="email"><i class="zmdi zmdi-email"></i></label> <input
-									type="email" name="email" id="email" placeholder="Your Email" />
+									type="text" name="userId" id="userId" placeholder="Your Id" />
 							</div>
 							<div class="form-group">
 								<label for="pass"><i class="zmdi zmdi-lock"></i></label> <input
@@ -47,11 +47,7 @@
 								<input type="password" name="re_pass" id="re_pass"
 									placeholder="Repeat your password" />
 							</div>
-							<div class="form-group">
-								<label for="contact"><i class="zmdi zmdi-lock-outline"></i></label>
-								<input type="text" name="contact" id="contact"
-									placeholder="Contact no" />
-							</div>
+
 							<div class="form-group">
 								<input type="checkbox" name="agree-term" id="agree-term"
 									class="agree-term" /> <label for="agree-term"
@@ -59,7 +55,7 @@
 							</div>
 							<div class="form-group form-button">
 								<input type="submit" name="signup" id="signup"
-									class="form-submit" value="Register" />
+									class="form-submit" onclick="Registration();" value="Register" />
 							</div>
 						</form>
 					</div>
@@ -82,11 +78,76 @@
 	<link rel="stylesheet" href="alert/dist/sweetalert.css">
 
 <script type="text/javascript">
+	
+	async function Registration() {
+		var name = document.getElementById("name").value;
+		
+		if (!name) {
+		    alert('name is empty!');
+		    return false;
+		}
+		
+		var userId = document.getElementById("userId").value;
+		
+		if (!name) {
+		    alert('userId is empty!');
+		    return false;
+		}
+		
+		var password = document.getElementById("pass").value;
+		var repeatPassword = document.getElementById("re_pass").value;
+		
+		if(!password)
+			{
+			alert('Password Is Empty');
+			return false;
+			}
+		
+		if(!repeatPassword){
+			alert('2');
+			return false;
+		}
+		
+		if(password !== repeatPassword){
+			alert('일치하지 않음');
+			return false;
+		}
+		
+		var hashedPassword = await hash(password);
+		
+		SendRegistrationRequest("name=" + name + "&userId=" + userId + "&password=" + hashedPassword);
+		
+	    
+	    alert("회원가입이 완료되었습니다. 로그인 페이지로 이동합니다.");
+	    window.location.href = 'login.jsp';
+	}	
+	
+	function SendRegistrationRequest(string){
+		const xhr = new XMLHttpRequest();
+		xhr.open("POST", "../register", true);
 
-	var status = document.getelement8yId("status").value;
-	if(status == "success"){
-		swal("축하해요","계정 정상적으로 만들어졌어요","success");
+		// Send the proper header information along with the request
+		xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+	
+		xhr.send(string);
 	}
+	
+	function hash(string) {
+		  const utf8 = new TextEncoder().encode(string);
+		  return crypto.subtle.digest('SHA-256', utf8).then((hashBuffer) => {
+		    const hashArray = Array.from(new Uint8Array(hashBuffer));
+		    const hashHex = hashArray
+		      .map((bytes) => bytes.toString(16).padStart(2, '0'))
+		      .join('');
+		    return hashHex;
+		  });
+		}
+	
+	//var status = document.getelement8yId("status").value;
+	//if(status == "success"){
+	//	swal("축하해요","계정 정상적으로 만들어졌어요","success");
+	//}
 
 </script>
 

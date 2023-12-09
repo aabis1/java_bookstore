@@ -35,39 +35,34 @@ public class RegistartionServlet extends HttpServlet {
 */
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		//PrintWriter out = response.getWriter();
-		//out.print("working");
-		
-		String uname = request.getParameter("name");
-		String uemail = request.getParameter("email");
-		String upwd = request.getParameter("password");
-		String umobile = request.getParameter("contact");
+
+		String userName = request.getParameter("name");
+		String userId = request.getParameter("userId");
+		String userPassword = request.getParameter("password");
 		RequestDispatcher dispatcher = null;
 		Connection con = null;
 		PrintWriter out = response.getWriter();
-		out.print(uname);
-		out.print(uemail);
-		out.print(upwd);
-		out.print(umobile);
-		
+				
 		
 		try {
+			
+			// Validate
+			  // If Exist UserId, Return BadRequest (400)
+			
 			Class.forName("com.mysql.jdbc.Driver");
-			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/bookstore?useSSL=false","root","12345");
-			PreparedStatement pst = con.prepareStatement("insert into users(uname,upwd,uemail,umobile) values(?,?,?,?) ");
-			pst.setString(1, uname);
-			pst.setString(2, upwd);
-			pst.setString(3, uemail);
-			pst.setString(4, umobile);
+			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/bookstore?useSSL=false&allowPublicKeyRetrieval=true","root","qwer1234");
+			PreparedStatement pst = con.prepareStatement("Insert into user values(?,?,?) ");
+			pst.setString(1, userId);
+			pst.setString(2, userName);
+			pst.setString(3, userPassword);
 			
 			int rowCount = pst.executeUpdate();
 			dispatcher = request.getRequestDispatcher("registration.jsp");
 			if(rowCount > 0) {
-				request.setAttribute("status", "success");
+				response.setStatus(201);
 				
 			} else {
-				request.setAttribute("status", "failed");
+				response.setStatus(400);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

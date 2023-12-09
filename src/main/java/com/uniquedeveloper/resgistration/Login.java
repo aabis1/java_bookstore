@@ -1,10 +1,12 @@
 package com.uniquedeveloper.resgistration;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -39,29 +41,48 @@ public class Login extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String uemail = request.getParameter("username");
-		String upwd = request.getParameter("username");
-		HttpSession session = request.getSession();
-		RequestDispatcher dispatcher = null;
+
+		
+		// 웹페이지에서 전달한 데이터를 변수로 받고,
+		
+		String userId = request.getParameter("userId");
+		String Password = request.getParameter("password");
+		
+		
+		Connection con = null;
+		PrintWriter out = response.getWriter();
+	
+				
 		
 		try {
-			Class.forName("com.mysql.jdbc.Driver");
-			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/bookstore?useSSL=false","root","12345");
-			PreparedStatement pst = con.prepareStatement("select * from users where uemail = ? and upwd = ?");
-			pst.setString(1, uemail);
-			pst.setString(2, upwd);
 			
-			ResultSet rs = pst.executeQuery();
-			if (rs.next()) {
-				request.setAttribute("", rs.getString("uname"));
-				dispatcher = request.getRequestDispatcher("index.jsp");
-			} else {
-				request.setAttribute("status","failed");
-				dispatcher = request.getRequestDispatcher("login.jsp");
-			}
+	
+
+			String sql = "SELECT userId, Password FROM User";
+	
+			// 있다면 200을 return
+			
+			// 없다면 400을 return
+			
+			Class.forName("com.mysql.jdbc.Driver");
+			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/bookstore?useSSL=false&allowPublicKeyRetrieval=true","root","qwer1234");
+			PreparedStatement pst = con.prepareStatement("select 1 from User where userId=? and password=?");
+			pst.setString(1, userId);
+			pst.setString(2, Password);
+			
+			var rowCount = pst.executeQuery();
+			
+
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+			} finally {
+				try {
+					con.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 	}
 
 }
